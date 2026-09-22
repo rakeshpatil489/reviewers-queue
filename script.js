@@ -114,34 +114,43 @@ var SIGNER='Dr. Miriam Brandt';
 var QQ=[['why','Why isn\u2019t this above 90%?'],['change','What would change the answer?'],['similar','How did we classify similar products?']];
 
 var NOTES=[
-  {t:'Group by cause, not by score',b:'A 71% score says how unsure Alice is, not why. A missing product fact, a legal judgment call and a clash with master data each need a different action, so the queue tabs are organised around the action.',view:'list',
-    a:'I\u2019m assuming Alice\u2019s model can actually label why its confidence is low, not just emit a score. I haven\u2019t seen that output, so this is the one signal the whole concept leans on. If it exists, grouping by it turns one number into three different playbooks instead of one queue everyone reads the same way.'},
-  {t:'Sort by deadline',b:'Reviewers work against shipments and launches. The queue is sorted by when each product is needed, so it answers "what blocks revenue first" rather than "what scored lowest".',view:'list',
-    a:'I\u2019m assuming a trustworthy need-by date is already attached to each product; the dates here are sample values, not data from a live shipment plan. If real deadlines are that reliable, sorting by them tells a reviewer what\u2019s urgent without them having to reconstruct it from context.'},
-  {t:'Fits the product that exists',b:'The queue sits next to Projects and reuses traide\u2019s list and decision basis panel with Alice. The surface area is small, which makes it cheap to ship and easy to learn.',
-    a:'I\u2019m assuming traide already has a list view and a decision-basis-with-Alice panel that this queue can slot into, based on what I could see from outside, not the live design system. If that\u2019s accurate, this ships as a thin layer over existing pieces instead of a new app to learn and maintain.'},
-  {t:'Say why before asking what',b:'The banner tells the reviewer what kind of work this is before they read anything else: find a fact, make a call, or settle a conflict.',view:'detail',
-    a:'This depends on the same cause label from note 1 being reliable enough to lead with, before the reviewer has read any product detail. If it is, naming the type of work up front saves the reviewer from diagnosing the cause themselves on every single item.'},
-  {t:'Show two codes, not the whole tariff path',b:'Every product still comes down to two competing codes. Instead of the section-and-chapter path both share, the list shows just the codes, a short description and Alice\u2019s confidence, so the reviewer compares the two directly instead of re-deriving a whole classification.',view:'detail',
-    a:'I\u2019m assuming Alice\u2019s model can reliably narrow every low-confidence item down to exactly two comparable candidates. I haven\u2019t seen that guarantee, and some real cases might have three or more contenders. Where it holds, showing just the two codes side by side lets the reviewer compare them directly instead of reading a full classification path.'},
-  {t:'Show confidence as a number, not a bar',b:'Each code shows Alice\u2019s confidence as a plain percentage, with no meter or threshold marker to interpret here. The 90% release rule that put the item in this queue is stated in the list view instead, so this view stays about comparing two numbers.',view:'detail',
-    a:'I\u2019m assuming 90% is close to traide\u2019s real release threshold; I picked it as a plausible sample value, not a confirmed number. Whatever the real figure is, stating it as a rule elsewhere and a plain number here keeps this view about comparing codes, not decoding a bar.'},
-  {t:'Turn research into one question',b:'For data gaps, Alice names the single fact that decides the code and the clues she found. Answering updates the classification list, the confidence and the tariff field at once, so the reviewer sees the consequence before approving.',view:'detail',g:'fact',
-    a:'I\u2019m assuming Alice can isolate the one fact that would flip the decision and recompute a real confidence once it\u2019s supplied. I don\u2019t know if every gap reduces this cleanly, or if some need several facts at once. Where it does, turning research into one question replaces a lookup task with a single click.'},
-  {t:'"Not sure" routes instead of guessing',b:'The person who knows the product is rarely on the customs team. One click sends a structured question they can answer from email without a login, and the item leaves the queue until it returns.',view:'detail',g:'fact',
-    a:'I\u2019m assuming there\u2019s a reliable way to know who owns a given product fact, and that they can be reached and answer outside a traide login. I don\u2019t have visibility into traide\u2019s org data or whether this handoff exists today. If that mapping holds, it heads off the common failure of guessing rather than asking under time pressure.'},
-  {t:'Every fact shows where it came from',b:'Facts from SAP, the PIM or a datasheet read as solid. Facts Alice read from an image stay visually weaker until a person confirms them, so the documentation shows which inputs a human vouched for.',view:'detail',
-    a:'I\u2019m assuming the import pipeline tags each fact with its source system, and separately flags which facts Alice read from an image rather than one a system recorded directly. I haven\u2019t seen this provenance data; the sources here are invented for the sample. If sources really are tagged, this lets a reviewer trust facts differently instead of treating every field as equally solid.'},
-  {t:'No default on judgment calls',b:'When the law can be read two ways, Alice\u2019s pick is labeled \u201cAlice\u2019s suggestion\u201d so its origin is clear, but neither option is preselected in the choice below. That friction is deliberate: it counters automation bias on exactly the decision the reviewer signs.',view:'detail',g:'judgment',
-    a:'I\u2019m assuming reviewers are prone to defaulting to whatever\u2019s labeled as the AI\u2019s pick under time pressure, based on general findings on AI-assisted decisions, not data on this team\u2019s behavior. If that bias is real here, labeling the origin without preselecting the choice forces an active decision on exactly the call the reviewer is signing their name to.'},
-  {t:'Open the basis where the evidence is',b:'For conflicts, the decision basis opens on master data instead of Alice, and shows which past products are affected. The reviewer can flag them for re-review without changing anything live in SAP.',view:'detail',g:'conflict',
-    a:'I\u2019m assuming a conflict can always be traced to specific, nameable past products in master data, not just a vague mismatch. I don\u2019t know if that lookup is reliably available at review time. If it is, opening straight to the disagreement lets the reviewer see the evidence immediately instead of hunting for it after reading Alice\u2019s case first.'},
-  {t:'Documentation is written while you work',b:'The decision bar states what will be recorded before you approve. Approving moves the product to Documentation and hands over to a senior reviewer, which keeps the four-eyes principle intact.',view:'detail',
-    a:'I\u2019m assuming a second-reviewer sign-off step already exists in traide\u2019s process and that this queue can hand off into it, rather than this being a new step to introduce. If that hook already exists, showing what gets recorded before approval keeps documentation as a byproduct of the decision instead of separate paperwork after it.'},
-  {t:'Overrides need a reason',b:'A structured reason turns every override into feedback for Alice and a defensible audit entry. Free text alone gets skipped under time pressure.',view:'detail',override:true,
-    a:'I\u2019m assuming an override reason can actually flow back into correcting or retraining Alice\u2019s suggestions, not just sit in an audit log. I have no visibility into that feedback loop. If the channel exists, a structured reason becomes usable signal instead of a compliance box nobody reads.'},
-  {t:'What I would measure',b:'Primary: median review time per queue item. Guardrail: corrections at sign-off and after release, so speed never costs accuracy. Also: the share of items routed to data owners and override reasons by category. In production, pace belongs in a team view, not as pressure on individuals.',view:'list',
-    a:'I\u2019m assuming traide can capture review start/stop timestamps and post-release correction events per item; I haven\u2019t seen instrumentation for either. If both are measurable, tracking them together stops speed from being optimised at the cost of accuracy, since the guardrail is watching for that trade-off in real time.'}
+  {t:'Group by cause, not by score',
+    what:'The queue is split into three tabs: missing information, needs expert judgment, and master-data conflict.',
+    why:'A score tells you how unsure Alice is, not why. Each reason needs a different kind of work, so the queue is organised around the work.',
+    a:'Alice can tell which of the three reasons applies to each item. The whole concept leans on this.',view:'list'},
+  {t:'Sorted by deadline',
+    what:'Items are sorted by when the product is needed, not by the lowest score.',
+    why:'Reviewers work against shipments and launches. The most urgent item should be at the top.',view:'list'},
+  {t:'Built on what already exists',
+    what:'The queue sits next to Projects and reuses traide\u2019s product list and Alice\u2019s suggestion panel.',
+    why:'Less to build, and nothing new for users to learn. The only new parts are the grouping and the decision block.'},
+  {t:'Compare two codes, not a whole classification',
+    what:'Each item shows the two competing codes, a short description of each, and Alice\u2019s confidence.',
+    why:'The reviewer only has to choose between two options, so they shouldn\u2019t have to re-read the full tariff path.',
+    a:'Most low-confidence items come down to two real candidates. Some may have three or more.',view:'detail'},
+  {t:'One question instead of research',
+    what:'When a fact is missing, Alice asks the one question that decides the code. If the reviewer doesn\u2019t know, \u201cI don\u2019t know\u201d sends the question to the person who does.',
+    why:'The person who knows the product is usually not on the customs team. Asking them is better than guessing under time pressure.',
+    a:'One fact is usually enough to settle the code, and the product owner will answer a quick request.',view:'detail',g:'fact'},
+  {t:'Every fact shows where it came from',
+    what:'Each product fact is labelled with its source: SAP, the PIM, a datasheet or an image. Facts Alice read from an image look weaker until someone confirms them.',
+    why:'The reviewer, and later an auditor, can see which facts a person actually checked.',view:'detail'},
+  {t:'No default on judgment calls',
+    what:'When the rules can be read two ways, Alice\u2019s pick is labelled, but nothing is preselected.',
+    opts:['Preselect Alice\u2019s pick: fastest, but easy to approve without thinking.',
+      'Hide Alice\u2019s pick: safe, but it throws away useful input.',
+      'Label it and preselect nothing: keeps her input and keeps the reviewer deciding. This is the one I chose.'],
+    why:'The extra click only appears on the decisions the reviewer signs their name to.',
+    a:'Judgment calls are a small part of the queue, so the extra step costs little overall.',view:'detail',g:'judgment'},
+  {t:'Start with the evidence',
+    what:'For master-data conflicts, the right panel opens on master data instead of Alice, showing the past products that disagree.',
+    why:'The conflict is the question, so the reviewer sees it first. They can flag the old products for re-review without changing anything live.',view:'detail',g:'conflict'},
+  {t:'Documented as you decide',
+    what:'Before approving, the decision bar shows what will be recorded. Approving hands the item to a senior reviewer for sign-off.',
+    why:'Documentation happens as part of the decision, not as paperwork afterwards, and the four-eyes check stays in place.',view:'detail'},
+  {t:'How I\u2019d know it works',
+    what:'Track the median time per item in the queue.',
+    why:'That\u2019s where expert time goes. Corrections at sign-off act as the safety check, so speed never comes at the cost of accuracy.',view:'list'}
 ];
 
 /* state */
@@ -209,7 +218,7 @@ function renderList(){
   if(done===ITEMS.length){
     h+='<div class="donebar"><p><strong>All three sample products are reviewed.</strong> Median time per item: '+(m?fmtDur(m):'not measured')+'. Each one is waiting for sign-off from '+SIGNER+'.</p><button class="btn" data-act="reset">Reset the prototype</button></div>';
   }
-  h+='<div class="listmeta"><p>'+esc(hint)+'</p><span data-host style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><b>'+done+'</b> of '+ITEMS.length+' reviewed</span><span class="pill">Median per item <b>'+(m?fmtDur(m):'not yet')+'</b></span>'+pin(14)+'</span></div>';
+  h+='<div class="listmeta"><p>'+esc(hint)+'</p><span data-host style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill"><b>'+done+'</b> of '+ITEMS.length+' reviewed</span><span class="pill">Median per item <b>'+(m?fmtDur(m):'not yet')+'</b></span>'+pin(10)+'</span></div>';
   h+='<div class="tablewrap"><table class="ltable"><thead><tr><th style="width:36px"><span class="cb" aria-hidden="true"></span></th><th><span class="sorth">Art. No.'+ic('sort','sm')+'</span></th><th><span class="sorth">Product'+ic('sort','sm')+'</span></th><th>Why it\u2019s here</th><th>Alice\u2019s suggestion</th><th data-host><span class="sorth">Needed by'+ic('sort','sm')+'</span>'+pin(2,'inside')+'</th><th><span class="sorth">Decision'+ic('sort','sm')+'</span></th></tr></thead><tbody>';
   rows.forEach(function(it){
     var st=stOf(it),badge,codeHTML;
@@ -236,10 +245,10 @@ function shownConf(it,st,i){
 }
 function tclistHTML(it,st){
   var sel=st.override?-1:st.choice;
-  return '<div class="tclist" data-host>'+pin(5)+it.cands.map(function(c,i){
+  return '<div class="tclist" data-host>'+pin(4)+it.cands.map(function(c,i){
     var shown=shownConf(it,st,i),cls=sel===null?'':(sel===i?'win':'lose');
     var pct=shown!==c.conf?'<s>'+c.conf+'%</s>'+shown+'%':c.conf+'%';
-    return '<div class="trow '+cls+'">'+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct" data-host>'+pct+(i===0?pin(6,'inside'):'')+'</span></div>';
+    return '<div class="trow '+cls+'">'+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct" data-host>'+pct+(i===0?'':'')+'</span></div>';
   }).join('')+'</div>';
 }
 function evidenceHTML(it,st){
@@ -250,17 +259,17 @@ function evidenceHTML(it,st){
 function tariffFact(it,st){
   var q=it.q,head='<p class="subh">Two possible classifications</p><p class="subp">One fact decides between them.</p>'+tclistHTML(it,st);
   if(st.status==='waiting'){
-    return head+'<div class="decide g-fact" data-host>'+pin(7,'inside')+'<p class="dlabel">Waiting for an answer</p><p class="q-text">'+esc(q.owner.name)+' has the question</p><p class="q-why">Sent at '+st.askedAt+'. The product is out of your way and returns to the queue when '+esc(q.owner.first)+' answers.</p><div class="waitq">'+esc(st.askText)+'</div>'+
+    return head+'<div class="decide g-fact" data-host>'+pin(5,'inside')+'<p class="dlabel">Waiting for an answer</p><p class="q-text">'+esc(q.owner.name)+' has the question</p><p class="q-why">Sent at '+st.askedAt+'. The product is out of your way and returns to the queue when '+esc(q.owner.first)+' answers.</p><div class="waitq">'+esc(st.askText)+'</div>'+
       '<div class="row"><button class="btn" data-act="sim-reply">Simulate '+esc(q.owner.first)+'\u2019s reply</button><span class="proto">Prototype only</span><button class="link" data-act="cancel-ask">Withdraw the question</button></div></div>';
   }
   var dis=st.status==='approved'?' disabled':'',ans=st.answer,sc=st.choice!==null&&!st.override?it.cands[st.choice]:null;
-  return head+'<div class="decide g-fact" data-host>'+pin(7,'inside')+
+  return head+'<div class="decide g-fact" data-host>'+pin(5,'inside')+
     '<p class="dlabel">Alice needs one fact</p><p class="q-text">'+esc(q.text)+'</p>'+
     evidenceHTML(it,st)+
     '<div class="answers" role="group" aria-label="Your answer">'+
       '<button type="button" class="ans'+(ans==='yes'?' on':'')+'" data-answer="yes"'+dis+' role="radio" aria-checked="'+(ans==='yes')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.yes)+'</button>'+
       '<button type="button" class="ans'+(ans==='no'?' on':'')+'" data-answer="no"'+dis+' role="radio" aria-checked="'+(ans==='no')+'"><span class="ans-radio" aria-hidden="true"></span>'+esc(q.no)+'</button>'+
-      '<span data-host style="display:inline-flex"><button type="button" class="ans" data-act="ask"'+dis+'><span class="ans-radio" aria-hidden="true"></span>I don\u2019t know</button>'+pin(8,'inside')+'</span>'+
+      '<span data-host style="display:inline-flex"><button type="button" class="ans" data-act="ask"'+dis+'><span class="ans-radio" aria-hidden="true"></span>I don\u2019t know</button>'+''+'</span>'+
     '</div>'+
     (ans?'<p class="chosen">'+ic('checkc','sm')+'Your answer: <strong>'+esc(ans==='yes'?q.yes:q.no)+'</strong></p>':'')+
     (ans&&sc?'<p class="answered">'+(st.by==='you'?'Recorded as your answer.':'Answered by '+esc(q.owner.name)+'.')+' '+sc.code+' is now at '+sc.after+'%, above the release threshold.</p>':'')+
@@ -268,10 +277,10 @@ function tariffFact(it,st){
 }
 function judgeClassificationsHTML(it,st){
   var sel=st.override?-1:st.choice;
-  return '<div class="tclist" data-host>'+pin(5)+it.cands.map(function(c,i){
+  return '<div class="tclist" data-host>'+pin(4)+it.cands.map(function(c,i){
     var cls=sel===null?'':(sel===i?'win':'lose');
     var tag=i===0?'<span class="cand-tag alice">Alice’s suggestion</span>':'<span class="cand-tag">Alternative</span>';
-    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct" data-host>'+c.conf+'%'+(i===0?pin(6,'inside'):'')+'</span></div>';
+    return '<div class="trow '+cls+'">'+tag+tcode(c.code,sel===i?'pend':'')+'<span class="cand-title">'+esc(c.title)+'</span><span class="pct" data-host>'+c.conf+'%'+(i===0?'':'')+'</span></div>';
   }).join('')+'</div>';
 }
 function judgeEvidenceHTML(it,st){
@@ -284,7 +293,7 @@ function judgeEvidenceHTML(it,st){
 function tariffJudge(it,st){
   var j=it.judge,dis=st.status==='approved'?' disabled':'',sel=st.override?-1:st.choice;
   var head='<p class="subh">Two possible classifications</p><p class="subp">The tariff can be read two ways. You make the call.</p>'+judgeClassificationsHTML(it,st);
-  return head+'<div class="decide g-judgment" data-host>'+pin(10,'inside')+
+  return head+'<div class="decide g-judgment" data-host>'+pin(7,'inside')+
     '<p class="dlabel">Your call</p><p class="q-text">'+esc(j.frame)+'</p>'+
     judgeEvidenceHTML(it,st)+
     '<div class="answers" role="radiogroup" aria-label="Your call">'+it.cands.map(function(c,i){
@@ -306,7 +315,7 @@ function conflictEvidenceHTML(it,st){
 function tariffConflict(it,st){
   var dis=st.status==='approved'?' disabled':'',c0=st.choice===0&&!st.override,c1=st.choice===1&&!st.override;
   var head='<p class="subh">Two possible classifications</p><p class="subp">Alice disagrees with your master data. One of the two is wrong.</p>'+tclistHTML(it,st);
-  return head+'<div class="decide g-conflict" data-host>'+pin(11,'inside')+
+  return head+'<div class="decide g-conflict" data-host>'+pin(8,'inside')+
     '<p class="dlabel">Settle the conflict</p><p class="q-text">Is this harness a vehicle wiring set, as your master data suggests?</p>'+
     conflictEvidenceHTML(it,st)+
     '<div class="answers" role="radiogroup" aria-label="Which code is right">'+
@@ -327,7 +336,7 @@ function provHTML(src,it,st,key){
   return '<span class="prov">'+esc({'SAP':'From SAP','PIM':'From PIM'}[src]||src)+'</span>';
 }
 function factsHTML(it,st){
-  return '<div class="graybox" data-host>'+pin(9)+'<table class="facts"><tbody>'+it.facts.map(function(f){
+  return '<div class="graybox" data-host>'+pin(6)+'<table class="facts"><tbody>'+it.facts.map(function(f){
     var k=f[0],v=f[1],src=f[2],cls='';
     if(v===null){
       if(st.answer){v=st.answer==='yes'?it.q.yesVal:it.q.noVal;src=st.by==='you'?'you':'owner';}
@@ -367,11 +376,11 @@ function decisionHTML(it,st){
   if(st.status==='approved')return '<div class="dec-done">'+tcode(st.approvedCode)+'<span>Reviewed by you. Waiting for sign-off from '+SIGNER+', Head of Customs.</span><button class="link" data-act="reopen">Reopen</button></div>';
   if(st.status==='waiting')return '<div class="dec-done"><span>Decision paused until '+esc(it.q.owner.first)+' answers.</span></div>';
   var code=currentCode(it,st),title=st.override?'Your code. Reason: '+st.override.reason:(st.choice!==null?it.cands[st.choice].title:'');
-  var ov=S.ovOpen?'<div class="override" data-host>'+pin(13)+
+  var ov=S.ovOpen?'<div class="override" data-host>'+''+
     '<label>Code<input id="ovCode" inputmode="numeric" autocomplete="off" placeholder="0000.00.00"></label>'+
     '<label>Why you\u2019re overriding<select id="ovReason"><option value="">Choose a reason</option>'+REASONS.map(function(r){return '<option>'+esc(r)+'</option>';}).join('')+'</select></label>'+
     '<button class="btn" data-act="ov-apply">Use this code</button><button class="link" data-act="ov-cancel">Cancel</button><p class="err" id="ovErr" role="alert"></p></div>':'';
-  return ov+'<div class="dec-row" data-host>'+pin(12)+
+  return ov+'<div class="dec-row" data-host>'+pin(9)+
     '<div class="dec-sum">'+(code?'<span class="line">'+tcode(code,'pend')+'<span class="dec-title">'+esc(title)+'</span></span><span class="dec-rec">Documented with '+recordText(it,st)+'.</span>':'<span class="dec-empty">'+emptyPrompt(it)+'</span>')+'</div>'+
     '<div class="dec-actions">'+(S.ovOpen?'':'<button class="link" data-act="override">Use another code</button>')+
     '<button class="btn primary" data-act="approve"'+(code?'':' disabled')+'>Approve and send for sign-off</button></div></div>';
@@ -419,7 +428,7 @@ function renderDetail(){
     '<div class="dnav"><span class="pos"><b>'+idx+'</b> <span>/ '+ITEMS.length+'</span></span><button data-act="prev" aria-label="Previous product">'+ic('up','sm')+'</button><button data-act="next" aria-label="Next product">'+ic('down','sm')+'</button></div></div>'+
     '<div class="dbody"><div class="dleft"><div class="dscroll">'+
       '<h2 class="dtitle">Your decision</h2>'+
-      '<div class="banner" data-host>'+pin(4)+'<div class="brow"><span class="cause g-'+it.group+'">'+GROUPS[it.group].label+'</span><span class="due">Needed by '+it.due+' for the '+esc(it.dueFor)+'</span></div><p>'+esc(GROUPS[it.group].hint)+'</p></div>'+
+      '<div class="banner" data-host>'+''+'<div class="brow"><span class="cause g-'+it.group+'">'+GROUPS[it.group].label+'</span><span class="due">Needed by '+it.due+' for the '+esc(it.dueFor)+'</span></div><p>'+esc(GROUPS[it.group].hint)+'</p></div>'+
       sect('product','Product',productBody)+
       sect('tariff','Tariff classification',tariffBody)+
       sect('doc','Documentation',auditHTML(it,st))+
@@ -580,14 +589,12 @@ function openNote(n){
   if(note.view==='detail'){
     var need=note.g,c=cur();
     var ok=S.view==='detail'&&c&&(!need||c.group===need)&&stOf(c).status!=='waiting';
-    if(note.override)ok=ok&&stOf(c).status==='open';
     if(!ok){
       var pool=ITEMS.filter(function(i){return (!need||i.group===need)&&stOf(i).status==='open';});
       if(!pool.length)pool=ITEMS.filter(function(i){return (!need||i.group===need)&&stOf(i).status!=='waiting';});
       if(!pool.length)pool=ITEMS.filter(function(i){return !need||i.group===need;});
       S.view='detail';S.cur=pool[0].id;S.basis=pool[0].group==='conflict'?'master':'alice';
     }
-    if(note.override&&stOf(cur()).status==='open')S.ovOpen=true;
     S.closed.tariff=false;S.closed.product=false;
   }
   S.note=n;
@@ -597,8 +604,11 @@ function openNote(n){
 function positionNote(n,scroll){
   var p=document.querySelector('.pin[data-pin="'+n+'"]'),pop=$('#pop'),note=NOTES[n-1];
   document.querySelectorAll('.pin.active').forEach(function(x){x.classList.remove('active');});
-  pop.innerHTML='<button class="pop-x" data-act="note-close" aria-label="Close note">\u00d7</button><div class="pop-n">Design note '+n+' of '+NOTES.length+'</div><h3>'+esc(note.t)+'</h3><p>'+esc(note.b)+'</p>'+
-    (note.a?'<p class="pop-assume"><strong>Assumption:</strong> '+esc(note.a)+'</p>':'')+
+  pop.innerHTML='<button class="pop-x" data-act="note-close" aria-label="Close note">\u00d7</button><div class="pop-n">Design note '+n+' of '+NOTES.length+'</div><h3>'+esc(note.t)+'</h3>'+
+    '<p class="pop-sec"><strong>What:</strong> '+esc(note.what)+'</p>'+
+    (note.opts?'<p class="pop-sec"><strong>What I considered:</strong></p><ul class="pop-opts">'+note.opts.map(function(o){return '<li>'+esc(o)+'</li>';}).join('')+'</ul>':'')+
+    '<p class="pop-sec"><strong>Why:</strong> '+esc(note.why)+'</p>'+
+    (note.a?'<p class="pop-assume"><strong>Assuming:</strong> '+esc(note.a)+'</p>':'')+
     '<div class="pop-nav"><button class="btn" data-act="note-prev"'+(n===1?' disabled':'')+'>Previous</button><button class="btn" data-act="note-next">'+(n===NOTES.length?'Done':'Next')+'</button></div>';
   pop.classList.add('show');
   if(!p||!p.offsetParent){pop.style.left='50%';pop.style.top='90px';pop.style.transform='translateX(-50%)';return;}
